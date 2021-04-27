@@ -1,15 +1,15 @@
 // Define Motor Pins
-#define Drive = 5;
-#define Dir = 4;
-#define EnA = 3;
-#define EnB = 2;
-#define Pi = 3.1415;
+#define Drive 5
+#define Dir 4
+#define EnA 3
+#define EnB  2
+#define Pi  3.1415
 
 // Define Controller Variables
 volatile long CT = 0;
-float Sp[2] = {0.0,0.0};
+float Sp[2] = {0.0, 0.0};
 float Sp_dot = 0;
-float Est[2] = {0.0,0.0};
+float Est[2] = {0.0, 0.0};
 float Est_dot = 0;
 float U = 0;
 float Vmax = 12;
@@ -30,26 +30,26 @@ void loop() {
   Est[1] = Measure();
   Est_dot = Deriv(Est[1], Est[0]);
   Est[1] = Est[0];
-  // Store Setpoint tovariable, take derivative and reindex
+  // Store Setpoint to variable, take derivative and reindex
   Sp[1] = SetPoint();
-  Sp_dot = Deriv(Sp[1],Sp[0]);
+  Sp_dot = Deriv(Sp[1], Sp[0]);
   Sp[0] = Sp[1];
   // Compute Controller Input
   U = Controller(Sp[1], Sp_dot, Est[1], Est_dot);
   // Actuate motor
   Actuate(U);
   // Output data to serial monitor
-  Report(); 
+  Report();
 }
 
 float SetPoint() {
-  return 3.14 * sin(5*float(millis()) / 1000);
+  return 3.14 * sin(5 * float(millis()) / 1000);
 }
 float SetPoint_deriv() {
   return 0;
 }
 float Measure() {
-  return float(CT) * (4 * Pi / 1216); 
+  return float(CT) * (4 * Pi / 1216);
 }
 
 float Deriv(float e1, float e0) {
@@ -61,13 +61,13 @@ float Controller(float sp, float sp_dot, float est, float est_dot) {
   return u;
 }
 
-void Report(){
+void Report() {
   Serial.print("Current Position: ");
   Serial.print(Est[1]);
   Serial.print(" [rad]\t");
   Serial.print("Current Velocity: ");
   Serial.print(Est_dot);
-  Serial.println(" [rad/s]")
+  Serial.println(" [rad/s]");
 }
 
 void Actuate(float u) {
@@ -81,7 +81,6 @@ void Actuate(float u) {
   int drive = min(255, 255 * (abs(u) / Vmax));
   digitalWrite(Dir, dir);
   analogWrite(Drive, drive);
-
 }
 
 void CtA() {
